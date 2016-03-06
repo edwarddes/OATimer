@@ -45,7 +45,7 @@ public class Downloader
         	@SuppressWarnings("unused")
 			Downloader main = new Downloader();
             serialPort = new RxTxSerialManager();
-            serialPort.connect("/dev/tty.usbserial", 0, false);
+            serialPort.connect("/dev/tty.SLAB_USBtoUART", 0, true);
             while(true)
             {
             	SICommand command = serialPort.reader.recievePacketQueue().take();
@@ -80,8 +80,9 @@ public class Downloader
             	if(command instanceof SI6Inserted)
             	{
             		SI6State = SI6BlockState.zero;
-            		serialPort.writer.packetizer.dePacketize((new SI6ReadBlockRequest(0x00)).rawPacket());
+            		serialPort.writer.packetizer.dePacketize((new SI6ReadBlockRequest(0x08)).rawPacket());
             	}
+            	/*
             	if(command instanceof SI6ReadBlock)
             	{
             		if(SI6State == SI6BlockState.zero)
@@ -110,6 +111,7 @@ public class Downloader
 						StringEntity entity = new StringEntity(new SI6DownloadRecordBuilder(SI6Block0,SI6Block1,SI6Block6,SI6Block7).toString(), "UTF-8");
             		}
             	}
+            	*/
             	if(command instanceof SI89Inserted)
             	{
             		

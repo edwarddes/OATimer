@@ -13,6 +13,7 @@ import com.desparddesign.orienteering.timer.PTB605v13.commands.responses.Paramet
 import com.desparddesign.orienteering.timer.PTB605v13.commands.responses.PrinterStatusResponse;
 import com.desparddesign.orienteering.timer.PTB605v13.commands.responses.SyncResponse;
 import com.desparddesign.orienteering.timer.PTB605v13.commands.responses.TimingResponse;
+import com.desparddesign.orienteering.timer.PTB605v13.transport.Transport;
 
 public class PTB605v13Packetizer
 {	
@@ -25,6 +26,7 @@ public class PTB605v13Packetizer
 	
 	public LinkedBlockingQueue<PTB605Command> recieveQueue;
 	public LinkedBlockingQueue<byte[]> sendQueue;
+	public Transport transport;
 	
 	protected PTB605CommandPacket currentPacket;
 	
@@ -37,11 +39,12 @@ public class PTB605v13Packetizer
 	private packetizationStage stage;
 
 	
-	public PTB605v13Packetizer()
+	public PTB605v13Packetizer(Transport t)
 	{
 		stage = packetizationStage.lookingForFirstChar;
 		recieveQueue = new LinkedBlockingQueue<PTB605Command>();
 		sendQueue = new LinkedBlockingQueue<byte[]>();
+		transport = t;
 	}
 	
 	public void dePacketize(PTB605CommandPacket sendPacket) throws InterruptedException
@@ -72,9 +75,9 @@ public class PTB605v13Packetizer
 				case lookingForFirstChar:
 				{
 					if(inByte == ACK)
-						System.out.println("ACK");
+						transport.NAK = false;
 					if(inByte == NAK)
-						System.out.println("NAK");
+						transport.NAK = true;
 					
 				
 					if(inByte != CR && inByte != ACK && inByte != NAK)

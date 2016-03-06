@@ -31,8 +31,8 @@ public class RxTxSerialManager extends Transport
                 InputStream in = serialPort.getInputStream();
                 out = serialPort.getOutputStream();
                 
-                reader = new Reader(in);
-                writer = new Writer(out);
+                reader = new Reader(in,this);
+                writer = new Writer(out,this);
                 readerThread = new Thread(reader);
                 readerThread.start();
                 writerThread = new Thread(writer);

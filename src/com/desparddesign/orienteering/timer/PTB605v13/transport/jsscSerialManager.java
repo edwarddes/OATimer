@@ -34,8 +34,8 @@ public class jsscSerialManager extends Transport
             InputStream in = new SerialInputStream(serialPort);
             OutputStream out = new SerialOutputStream(serialPort);
             
-            reader = new Reader(in);
-            writer = new Writer(out);
+            reader = new Reader(in,this);
+            writer = new Writer(out,this);
             readerThread = new Thread(reader);
             readerThread.start();
             writerThread = new Thread(writer);

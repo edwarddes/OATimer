@@ -3,6 +3,7 @@ package com.desparddesign.orienteering.codechecking.sportident;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.desparddesign.orienteering.codechecking.sportident.commands.GetSystemValueResponse;
+import com.desparddesign.orienteering.codechecking.sportident.commands.GetTimeResponse;
 import com.desparddesign.orienteering.codechecking.sportident.commands.SI5Inserted;
 import com.desparddesign.orienteering.codechecking.sportident.commands.SI5ReadBlock;
 import com.desparddesign.orienteering.codechecking.sportident.commands.SI6Inserted;
@@ -11,6 +12,7 @@ import com.desparddesign.orienteering.codechecking.sportident.commands.SI89Inser
 import com.desparddesign.orienteering.codechecking.sportident.commands.SICommand;
 import com.desparddesign.orienteering.codechecking.sportident.commands.SIPunchRecord;
 import com.desparddesign.orienteering.codechecking.sportident.commands.SIRemoved;
+import com.desparddesign.orienteering.codechecking.sportident.commands.SRRPollBufferEmptyResponse;
 
 public class SIPacketizer 
 {
@@ -133,10 +135,17 @@ public class SIPacketizer
 					
 					if(currentPacket.command() == 0x83)
 						recieveQueue.put(new GetSystemValueResponse(currentPacket));
+					else if(currentPacket.command() == 0xF7)
+						recieveQueue.put(new GetTimeResponse(currentPacket));
 					else if(currentPacket.command() == 0xB1)
 						recieveQueue.put(new SI5ReadBlock(currentPacket));
 					else if(currentPacket.command() == 0xD3)
-						recieveQueue.put(new SIPunchRecord(currentPacket));
+					{
+						if(currentPacket.length() == 1)
+							recieveQueue.put(new SRRPollBufferEmptyResponse(currentPacket));
+						else
+							recieveQueue.put(new SIPunchRecord(currentPacket));
+					}
 					else if(currentPacket.command() == 0xE1)
 						recieveQueue.put(new SI6ReadBlock(currentPacket));
 					else if(currentPacket.command() == 0xE5)

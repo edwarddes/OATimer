@@ -1,6 +1,7 @@
 package com.desparddesign.orienteering.timer.PTB605v13.transport;
 
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -19,13 +20,18 @@ public abstract class Transport
 	
 	protected OutputStream out = null;
 	
+	public boolean NAK = false;
+	
 	public abstract void connect(String device, int speed) throws Exception;
 	public abstract void disconnect() throws IOException;
 	
 	public void printString(String message) throws Exception
-	{	
-		writer.packetizer.dePacketize((new LinkToPrinter()).rawPacket());
-		Thread.sleep(10);
+	{
+		do
+		{
+			writer.packetizer.dePacketize((new LinkToPrinter()).rawPacket());
+			Thread.sleep(1000);
+		}while(NAK);
 		
 		out.write((byte)0x18);
 		Thread.sleep(20);
@@ -45,10 +51,10 @@ public abstract class Transport
         PTB605v13Packetizer packetizer;       
         boolean requestStop = false;
         
-        public Reader ( InputStream in)
+        public Reader ( InputStream in, Transport t)
         {
             this.in = in;
-            packetizer = new PTB605v13Packetizer();
+            packetizer = new PTB605v13Packetizer(t);
         }
         
         public void run ()
@@ -58,16 +64,26 @@ public abstract class Transport
             
             try
             {
-                while ( ( len = this.in.read(buffer)) > -1 )
-                {          	
-                	packetizer.packetize(buffer, len);
+            	while(true)
+            	{
+            		try
+            		{
+            			len = 0;
+            			len = this.in.read(buffer);
+            		}
+            		catch(SocketTimeoutException ex)
+            		{
+            			//read timed out, just go back through the loop
+            		}
+            		
+            		packetizer.packetize(buffer, len);
                 	if(requestStop)
                 	{
                 		requestStop = false;
                 		in.close();
                 		break;
                 	}
-                }
+            	}
             }
             catch ( InterruptedException e )
             {
@@ -95,10 +111,10 @@ public abstract class Transport
         public PTB605v13Packetizer packetizer;   
         boolean requestStop = false;
         
-        public Writer ( OutputStream out)
+        public Writer ( OutputStream out, Transport t)
         {
             this.out = out;
-            packetizer = new PTB605v13Packetizer();
+            packetizer = new PTB605v13Packetizer(t);
         }
         
         public void run ()

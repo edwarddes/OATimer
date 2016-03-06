@@ -12,7 +12,10 @@ public class SetDateTime extends PTB605Command
 	
 	public SetDateTime(LocalDateTime dt)
 	{		
-		dateTime = dt;
+		//dateTime = dt;
+		//make sure we send 0 as seconds.  The PTB always waits for a sync pulse after setting the dateTime, and 
+		//sets the time to 0 seconds at the sync pulse.
+		dateTime = new LocalDateTime(dt.getYear(),dt.getMonthOfYear(),dt.getDayOfMonth(),dt.getHourOfDay(),dt.getMinuteOfHour());
 	}
 	
 	public PTB605CommandPacket rawPacket()

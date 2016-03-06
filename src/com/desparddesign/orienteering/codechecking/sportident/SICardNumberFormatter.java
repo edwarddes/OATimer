@@ -82,6 +82,10 @@ public class SICardNumberFormatter
 		{
 			return (0x0F << 24) | cardNumber;
 		}
+		if(cardNumber > 8000000 && cardNumber < 9000000)
+		{
+			return (0x0F << 24) | cardNumber;
+		}
 		if(cardNumber > 9000000 && cardNumber < 10000000)
 		{
 			return (0x0F << 24) | cardNumber;
