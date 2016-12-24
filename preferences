@@ -1,0 +1,14 @@
+#serialPort = /dev/tty.usbserial
+serialPort = 192.168.1.176
+transport = GW212
+
+controlType = punchPreliminary
+
+raceID = 34
+host = 127.0.0.1
+port = 55555
+postURL = /cgi-bin/WebObjects/OA.woa/ra/race/
+
+printRawRecievePackets = false
+printRawRecieveUnknownPackets = true
+printRecievePackets = true

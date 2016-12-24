@@ -3,10 +3,14 @@ package com.desparddesign.orienteering.timer.PTB605v13.commands.controlCommands;
 import com.desparddesign.orienteering.timer.PTB605v13.PTB605CommandPacket;
 import com.desparddesign.orienteering.timer.PTB605v13.commands.PTB605Command;
 
-public class NewSession extends PTB605Command 
+public class NewSession extends PTB605Command
 {
 	public NewSession()
 	{		
+	}
+	
+	public NewSession(PTB605CommandPacket packet)
+	{
 	}
 	
 	public PTB605CommandPacket rawPacket()

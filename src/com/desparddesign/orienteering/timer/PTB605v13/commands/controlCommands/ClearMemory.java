@@ -1,12 +1,19 @@
 package com.desparddesign.orienteering.timer.PTB605v13.commands.controlCommands;
 
-import com.desparddesign.orienteering.timer.PTB605v13.PTB605CommandPacket;
 
-public class ClearMemory 
+import com.desparddesign.orienteering.timer.PTB605v13.PTB605CommandPacket;
+import com.desparddesign.orienteering.timer.PTB605v13.commands.PTB605Command;
+
+public class ClearMemory extends PTB605Command
 {
 	public ClearMemory()
 	{		
 	}
+	
+	public ClearMemory(PTB605CommandPacket packet)
+	{	
+	}
+
 	
 	public PTB605CommandPacket rawPacket()
 	{

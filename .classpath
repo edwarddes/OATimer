@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="libraries/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="libraries/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="libraries/httpclient-4.1.1.jar"/>
+	<classpathentry kind="lib" path="libraries/httpclient-cache-4.1.1.jar"/>
+	<classpathentry kind="lib" path="libraries/httpcore-4.1.jar"/>
+	<classpathentry kind="lib" path="libraries/httpmime-4.1.1.jar"/>
+	<classpathentry kind="lib" path="libraries/joda-time-2.0/joda-time-2.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="libraries/joda-time-2.0/joda-time-2.0-sources.jar"/>
+	<classpathentry kind="lib" path="libraries/joda-time-2.0/joda-time-2.0.jar"/>
+	<classpathentry kind="lib" path="libraries/jSSC-2.7.0-Release/javadoc/jssc-2.7.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="libraries/jSSC-2.7.0-Release/jssc.jar"/>
+	<classpathentry kind="lib" path="libraries/jSSC-2.7.0-Release/src/jssc-2.7.0-src.jar"/>
+	<classpathentry kind="lib" path="libraries/rxtx-2.1-7-bins-r2/RXTXcomm.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/edwarddes/Documents/orienteering/software/OATimer/OATimer/libraries/apache-log4j-1.2.16/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="/Users/edwarddes/Documents/orienteering/software/OATimer/OATimer/libraries/commons-cli-1.2/commons-cli-1.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="/Users/edwarddes/Documents/orienteering/software/OATimer/OATimer/libraries/commons-cli-1.2/commons-cli-1.2-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/edwarddes/Documents/orienteering/software/OATimer/OATimer/libraries/commons-cli-1.2/commons-cli-1.2.jar" sourcepath="/Users/edwarddes/Documents/orienteering/software/OATimer/OATimer/libraries/commons-cli-1.2/commons-cli-1.2-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/edwarddes/Documents/orienteering/software/OATimer/OATimer/libraries/postgresql-9.4.1211.jre6.jar"/>
+	<classpathentry kind="lib" path="/Users/edwarddes/Documents/orienteering/software/OATimer/OATimer/libraries/commons-csv-1.4/commons-csv-1.4.jar"/>
+	<classpathentry kind="lib" path="/Users/edwarddes/Documents/orienteering/software/OATimer/OATimer/libraries/commons-csv-1.4/commons-csv-1.4-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

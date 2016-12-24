@@ -9,6 +9,10 @@ public class GetDateTime extends PTB605Command
 	{		
 	}
 	
+	public GetDateTime(PTB605CommandPacket packet)
+	{	
+	}
+	
 	public PTB605CommandPacket rawPacket()
 	{
 		PTB605CommandPacket packet = new PTB605CommandPacket();

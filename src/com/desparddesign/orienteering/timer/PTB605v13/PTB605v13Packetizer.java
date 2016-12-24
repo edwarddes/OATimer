@@ -3,6 +3,10 @@ package com.desparddesign.orienteering.timer.PTB605v13;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.desparddesign.orienteering.timer.PTB605v13.commands.PTB605Command;
+import com.desparddesign.orienteering.timer.PTB605v13.commands.controlCommands.ClearMemory;
+import com.desparddesign.orienteering.timer.PTB605v13.commands.controlCommands.NewSession;
+import com.desparddesign.orienteering.timer.PTB605v13.commands.parameterCommands.SetDateTime;
+import com.desparddesign.orienteering.timer.PTB605v13.commands.queryCommands.GetDateTime;
 import com.desparddesign.orienteering.timer.PTB605v13.commands.responses.BatteryStatusResponse;
 import com.desparddesign.orienteering.timer.PTB605v13.commands.responses.DisplayResponse;
 import com.desparddesign.orienteering.timer.PTB605v13.commands.responses.GetDateTimeResponse;
@@ -19,10 +23,10 @@ public class PTB605v13Packetizer
 {	
 	static byte STX = 0x02;
 	static byte ETX = 0x03;
-	static byte ACK = 0x06;
-	static byte NAK = 0x15;
+	public static byte ACK = 0x06;
+	public static byte NAK = 0x15;
 	static byte CR  = 0x0D;
-	static byte SPACE = 0x20;
+	public static byte SPACE = 0x20;
 	
 	public LinkedBlockingQueue<PTB605Command> recieveQueue;
 	public LinkedBlockingQueue<byte[]> sendQueue;
@@ -33,7 +37,8 @@ public class PTB605v13Packetizer
 	private enum packetizationStage
 	{
 		lookingForFirstChar,
-		data
+		dataFromPTB,
+		dataToPTB
 	}
 	
 	private packetizationStage stage;
@@ -49,19 +54,34 @@ public class PTB605v13Packetizer
 	
 	public void dePacketize(PTB605CommandPacket sendPacket) throws InterruptedException
 	{
-		byte[] data = new byte[sendPacket.length() + 3];
-		int checksum = 0;
-		
-		data[0] = STX;//space
-		byte[] sendPacketData = sendPacket.data();
-		for(int i=0;i<sendPacket.length();i++)
+		byte[] data;
+		if(sendPacket.encapsulate)
 		{
-			data[i+1] = sendPacketData[i];
-			checksum = checksum + data[i+1];
-		}
-		data[sendPacket.length()+1] = (byte)((checksum % 256) & 0xFF);
-		data[sendPacket.length()+2] = ETX;
+			data = new byte[sendPacket.length() + 4];
+			int checksum = 0;
 		
+			data[0] = STX;//space
+			byte[] sendPacketData = sendPacket.data();
+			for(int i=0;i<sendPacket.length();i++)
+			{
+				data[i+1] = sendPacketData[i];
+				checksum = checksum + data[i+1];
+			}
+			data[sendPacket.length()+1] = (byte)((checksum % 256) & 0xFF);
+			data[sendPacket.length()+2] = ETX;
+			data[sendPacket.length()+3] = CR;
+		}
+		else
+		{
+			data = new byte[sendPacket.length() + 1];
+			byte[] sendPacketData = sendPacket.data();
+			for(int i=0;i<sendPacket.length();i++)
+			{
+				data[i] = sendPacketData[i];
+			}
+			data[sendPacket.length()] = CR;
+		}
+			
 		sendQueue.put(data);
 	}
 	
@@ -82,13 +102,64 @@ public class PTB605v13Packetizer
 				
 					if(inByte != CR && inByte != ACK && inByte != NAK)
 					{
-						currentPacket = new PTB605CommandPacket();
-						stage = packetizationStage.data;
-						currentPacket.addByte(inByte);	
+						//message to a PTB
+						if(inByte == STX)
+						{
+							currentPacket = new PTB605CommandPacket();
+							stage = packetizationStage.dataToPTB;
+						}
+						//response from a PTB
+						else
+						{
+							currentPacket = new PTB605CommandPacket();
+							stage = packetizationStage.dataFromPTB;
+							currentPacket.addByte(inByte);	
+						}
 					}
 					break;
 				}
-				case data:
+				case dataToPTB:
+				{
+					if(inByte == ETX)
+					{
+						stage = packetizationStage.lookingForFirstChar;
+						
+						//System.out.println("<-- Raw Packet");
+						//System.out.println(currentPacket);
+						//System.out.println("--> Raw Packet");
+						
+						String dataString = new String(currentPacket.data());
+						
+						if(dataString.startsWith("CC"))
+						{
+							recieveQueue.put(new ClearMemory(currentPacket));
+						} 
+						else if(dataString.startsWith("CS"))
+						{
+							recieveQueue.put(new NewSession(currentPacket));
+						} 
+						else if(dataString.startsWith("PD") || dataString.startsWith("Pd"))
+						{
+							recieveQueue.put(new SetDateTime(currentPacket));
+						}
+						else if(dataString.startsWith("QD"))
+						{
+							recieveQueue.put(new GetDateTime(currentPacket));
+						}
+						else
+						{
+							System.out.println("<-- Unknown Packet");
+							System.out.println(currentPacket);
+							System.out.println("--> Unknown Packet");
+						}
+						
+					}
+					else
+						currentPacket.addByte(inByte);
+					
+					break;
+				}
+				case dataFromPTB:
 				{
 					if(inByte == CR)
 					{

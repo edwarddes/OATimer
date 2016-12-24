@@ -18,6 +18,31 @@ public class SetDateTime extends PTB605Command
 		dateTime = new LocalDateTime(dt.getYear(),dt.getMonthOfYear(),dt.getDayOfMonth(),dt.getHourOfDay(),dt.getMinuteOfHour());
 	}
 	
+	public SetDateTime(PTB605CommandPacket command)
+	{
+		byte[] data = command.data();
+		String s = new String(data);
+		//US format
+		if(data[0] == 'P' && data[1] == 'd')
+		{
+			//PdMMDDYYhhmm
+			Integer month = Integer.parseInt(s.substring(2,4));
+			Integer day = Integer.parseInt(s.substring(4,6));
+			Integer year = Integer.parseInt(s.substring(6,8));
+			Integer hour = Integer.parseInt(s.substring(8,10));
+			Integer min = Integer.parseInt(s.substring(10,12));
+			
+			year+=2000;
+			
+			dateTime = new LocalDateTime(year,month,day,hour,min);
+		}
+		//Euro format
+		else
+		{
+			
+		}
+	}
+	
 	public PTB605CommandPacket rawPacket()
 	{
 		PTB605CommandPacket packet = new PTB605CommandPacket();
@@ -86,5 +111,10 @@ public class SetDateTime extends PTB605Command
 		
 		
 		return packet;
+	}
+	
+	public LocalDateTime getDateTime()
+	{
+		return dateTime;
 	}
 }

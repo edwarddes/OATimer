@@ -33,8 +33,8 @@ public class OETimingApp
 	JFrame mainFrame;
 	JPanel mainPane = new JPanel();
 	
-	JSplitPane topBottomSplit;
 	JPanel topPane;
+	JPanel middlePane;
 	JPanel bottomPane;
 	
 	JPanel serialPortSelectionPanel;
@@ -42,6 +42,8 @@ public class OETimingApp
 	JPanel PTBControlPanel;
 	JPanel connectToSIPanel;
 	JPanel connectToOEPanel;
+	
+	JTable timerHistory;
 	
 	JTextArea bottomText;
 	
@@ -157,6 +159,8 @@ public class OETimingApp
 		    	
 		    	createOEConnectButtons();
 		    	
+		    	createTimerTable();
+		    	
 		        createAndShowGUI();
 		    }
 		});
@@ -172,12 +176,15 @@ public class OETimingApp
 	    topPane = new JPanel();
 	    topPane.setLayout(new BoxLayout(topPane, BoxLayout.LINE_AXIS));
 	    bottomPane = new JPanel(new FlowLayout());
+	    middlePane = new JPanel(new FlowLayout());
 	    
 	    Dimension minimumSize = new Dimension(0, 0);
 	    topPane.setMinimumSize(minimumSize);
 	    bottomPane.setMinimumSize(minimumSize);
+	    middlePane.setMinimumSize(minimumSize);
 	    topPane.setPreferredSize(new Dimension(1000,200));
 	    bottomPane.setPreferredSize(new Dimension(1000,200));
+	    middlePane.setPreferredSize(new Dimension(1000,200));
 	    
 	    
 	    bottomText = new JTextArea("",10,40);
@@ -197,15 +204,30 @@ public class OETimingApp
 	    topPane.add(connectToOEPanel);
 	    topPane.add(Box.createHorizontalGlue());
 	    
+	    middlePane.add(new JScrollPane(timerHistory));
+	    timerHistory.setFillsViewportHeight(true);
+	    
 	    bottomPane.add(new JScrollPane(bottomText));
 	    
-	    topBottomSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, bottomPane);
+	    JSplitPane botMidSplit;
+	    botMidSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,middlePane,bottomPane);
+	    botMidSplit.setDividerLocation(250);
+	    
+		JSplitPane topBottomSplit;
+	    topBottomSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, botMidSplit);
 	    topBottomSplit.setDividerLocation(250);
 	    
 	    mainPane.add(topBottomSplit);
 	    
 	    mainFrame.pack();
 	    mainFrame.setVisible(true); // display this frame
+	}
+	
+	private void createTimerTable()
+	{
+		String[] columnNames = {"Channel","Time","Bib"};
+		Object[][] data = {{"Start", "12:12:12","100"}};
+		timerHistory = new JTable(data, columnNames);	
 	}
 	
 	private void createSerialPortSelectionPanel()
@@ -1038,7 +1060,7 @@ public class OETimingApp
 											
 											Tdc8000CommandPacket Tdc8000TimingPacket = 
 												new com.desparddesign.orienteering.timer.Tdc8000.commands.TimingResponse(
-													com.desparddesign.orienteering.timer.Tdc8000.commands.TimingResponse.MODE.TIMENOBIB,
+													com.desparddesign.orienteering.timer.Tdc8000.commands.TimingResponse.MODE.TIMEMEMO,
 													0, 1, false, finishTime, "00"
 											).rawPacket();
 												
@@ -1052,7 +1074,7 @@ public class OETimingApp
 											
 											Tdc8000CommandPacket Tdc8000TimingPacket = 
 												new com.desparddesign.orienteering.timer.Tdc8000.commands.TimingResponse(
-													com.desparddesign.orienteering.timer.Tdc8000.commands.TimingResponse.MODE.TIMENOBIB,
+													com.desparddesign.orienteering.timer.Tdc8000.commands.TimingResponse.MODE.TIMEMEMO,
 													0, 0, false, startTime, "00"
 											).rawPacket();
 												

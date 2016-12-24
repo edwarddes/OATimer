@@ -4,11 +4,13 @@ public class PTB605CommandPacket
 {
 	private byte[] data;
 	private int currentByte;
+	public boolean encapsulate;
 	
 	public PTB605CommandPacket()
 	{
 		data = new byte[100];
 		currentByte = 0;
+		encapsulate = true;
 	}
 	
 	public int length()

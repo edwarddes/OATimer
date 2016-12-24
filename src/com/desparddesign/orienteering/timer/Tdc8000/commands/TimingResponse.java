@@ -10,7 +10,7 @@ public class TimingResponse extends Tdc8000Command
 	public enum MODE
 	{
 		TIME,
-		TIMENOBIB,
+		TIMEINVALID,
 		TIMEMEMO,
 		CLEAREDTIME,
 		DQTIME,
@@ -39,7 +39,7 @@ public class TimingResponse extends Tdc8000Command
 			}
 			case '?':
 			{
-				mode = MODE.TIMENOBIB;
+				mode = MODE.TIMEINVALID;
 				break;
 			}
 			case 'm':
@@ -101,7 +101,9 @@ public class TimingResponse extends Tdc8000Command
 		Tdc8000CommandPacket packet = new Tdc8000CommandPacket();
 		if(mode == MODE.TIME)
 			packet.addByte((byte)' ');
-		else if(mode == MODE.TIMENOBIB)
+		else if(mode == MODE.TIMEMEMO)
+			packet.addByte((byte)'m');
+		else if(mode == MODE.TIMEINVALID)
 			packet.addByte((byte)'?');
 		
 		String bibNum = String.format("%04d", bib);
